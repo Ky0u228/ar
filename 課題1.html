@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XR 宇宙空間</title>
+<!-- A-Frame -->
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<style>
+
+        body {
+
+            margin: 0;
+
+            overflow: hidden;
+
+        }
+
+        #title {
+
+            position: fixed;
+
+            top: 20px;
+
+            left: 20px;
+
+            z-index: 10;
+
+            color: white;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            text-shadow: 0 0 10px #ffffff;
+
+        }
+
+        #info {
+
+            position: fixed;
+
+            bottom: 20px;
+
+            left: 20px;
+
+            z-index: 10;
+
+            color: white;
+
+            font-size: 16px;
+
+            text-shadow: 0 0 8px #ffffff;
+
+        }
+</style>
+</head>
+
+<body>
+<!-- 页面标题 -->
+<div id="title">
+
+        XR 宇宙空間
+</div>
+<div id="info">
+
+        惑星をクリックすると、色が変わって大きくなります
+</div>
+
+<a-scene>
+<!-- ================================= -->
+<!-- 纹理资源 -->
+<!-- ================================= -->
+<a-assets>
+<!-- 地球纹理 -->
+<img
+
+                id="earthTexture"
+
+                src="https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg">
+<!-- 月球纹理 -->
+<img
+
+                id="moonTexture"
+
+                src="https://threejs.org/examples/textures/planets/moon_1024.jpg">
+<!-- 火星纹理 -->
+<img
+
+                id="marsTexture"
+
+                src="https://threejs.org/examples/textures/planets/mars_1k_color.jpg">
+</a-assets>
+
+<!-- ================================= -->
+<!-- 黑色宇宙 -->
+<!-- ================================= -->
+<a-sky color="#000000"></a-sky>
+
+<!-- ================================= -->
+<!-- 环境光 -->
+<!-- ================================= -->
+<a-light
+
+            type="ambient"
+
+            color="#444466"
+
+            intensity="1">
+</a-light>
+
+<!-- ================================= -->
+<!-- 太阳光源 -->
+<!-- ================================= -->
+<a-light
+
+            type="point"
+
+            color="#ffffff"
+
+            intensity="4"
+
+            distance="30"
+
+            position="0 2 -6">
+</a-light>
+
+<!-- ================================= -->
+<!-- 太阳 -->
+<!-- ================================= -->
+<a-sphere
+
+            position="0 1 -6"
+
+            radius="1.2"
+
+            color="#ff9900"
+
+            material="
+
+                shader: standard;
+
+                emissive: #ff6600;
+
+                emissiveIntensity: 2
+
+            "
+
+            animation="
+
+                property: rotation;
+
+                to: 0 360 0;
+
+                loop: true;
+
+                dur: 8000
+
+            ">
+</a-sphere>
+
+<!-- 太阳光晕 -->
+<a-sphere
+
+            position="0 1 -6"
+
+            radius="1.35"
+
+            material="
+
+                color: #ff9900;
+
+                transparent: true;
+
+                opacity: 0.15;
+
+                shader: standard;
+
+                emissive: #ff5500;
+
+                emissiveIntensity: 2
+
+            "
+
+            animation="
+
+                property: scale;
+
+                dir: alternate;
+
+                to: 1.1 1.1 1.1;
+
+                loop: true;
+
+                dur: 1500
+
+            ">
+</a-sphere>
+
+<!-- ================================= -->
+<!-- 第一条轨道 -->
+<!-- 地球 -->
+<!-- ================================= -->
+<a-entity
+
+            position="0 1 -6"
+
+            animation="
+
+                property: rotation;
+
+                to: 0 360 0;
+
+                loop: true;
+
+                dur: 16000
+
+            ">
+<a-sphere
+
+                class="planet"
+
+                data-name="Earth"
+
+                position="3 0 0"
+
+                radius="0.55"
+
+                material="
+
+                    src: #earthTexture;
+
+                    roughness: 0.8
+
+                "
+
+                animation__rotate="
+
+                    property: rotation;
+
+                    to: 0 360 0;
+
+                    loop: true;
+
+                    dur: 5000
+
+                "
+
+                animation__float="
+
+                    property: position;
+
+                    dir: alternate;
+
+                    to: 3 0.4 0;
+
+                    loop: true;
+
+                    dur: 2000
+
+                ">
+</a-sphere>
+</a-entity>
+
+<!-- ================================= -->
+<!-- 第二条轨道 -->
+<!-- 月球 -->
+<!-- ================================= -->
+<a-entity
+
+            position="0 1 -6"
+
+            animation="
+
+                property: rotation;
+
+                to: 0 -360 0;
+
+                loop: true;
+
+                dur: 22000
+
+            ">
+<a-sphere
+
+                class="planet"
+
+                data-name="Moon"
+
+                position="-4 0 0"
+
+                radius="0.75"
+
+                material="
+
+                    src: #moonTexture;
+
+                    roughness: 1
+
+                "
+
+                animation__rotate="
+
+                    property: rotation;
+
+                    to: 360 360 0;
+
+                    loop: true;
+
+                    dur: 7000
+
+                "
+
+                animation__float="
+
+                    property: position;
+
+                    dir: alternate;
+
+                    to: -4 0.5 0;
+
+                    loop: true;
+
+                    dur: 2500
+
+                ">
+</a-sphere>
+</a-entity>
+
+<!-- ================================= -->
+<!-- 第三颗行星 -->
+<!-- 火星 -->
+<!-- ================================= -->
+<a-entity
+
+            position="0 1 -6"
+
+            animation="
+
+                property: rotation;
+
+                to: 0 360 0;
+
+                loop: true;
+
+                dur: 28000
+
+            ">
+<a-sphere
+
+                class="planet"
+
+                data-name="Mars"
+
+                position="0 0 4"
+
+                radius="0.65"
+
+                material="
+
+                    src: #marsTexture;
+
+                    roughness: 0.9
+
+                "
+
+                animation__rotate="
+
+                    property: rotation;
+
+                    to: 360 0 360;
+
+                    loop: true;
+
+                    dur: 6000
+
+                "
+
+                animation__float="
+
+                    property: position;
+
+                    dir: alternate;
+
+                    to: 0 0.45 4;
+
+                    loop: true;
+
+                    dur: 2200
+
+                ">
+</a-sphere>
+</a-entity>
+
+<!-- ================================= -->
+<!-- 星星 -->
+<!-- ================================= -->
+<a-entity id="stars"></a-entity>
+
+<!-- ================================= -->
+<!-- 摄像机 -->
+<!-- ================================= -->
+<a-entity
+
+            camera
+
+            position="0 1.6 2"
+
+            look-controls
+
+            wasd-controls>
+<!-- 鼠标点击 -->
+<a-cursor
+
+                raycaster="objects: .planet"
+
+                fuse="false"
+
+                color="white">
+</a-cursor>
+</a-entity>
+
+<!-- VR控制器 -->
+<a-entity
+
+            laser-controls="hand: left"
+
+            raycaster="objects: .planet"
+
+            line="color: white">
+</a-entity>
+<a-entity
+
+            laser-controls="hand: right"
+
+            raycaster="objects: .planet"
+
+            line="color: white">
+</a-entity>
+
+</a-scene>
+
+<!-- ================================= -->
+<!-- JavaScript -->
+<!-- ================================= -->
+<script>
+// ================================
+// 创建星星
+// ================================
+
+        const starContainer = document.querySelector("#stars");
+
+        for (let i = 0; i < 150; i++) {
+
+            const star = document.createElement("a-sphere");
+// 随机位置
+
+            const x = (Math.random() - 0.5) * 40;
+
+            const y = (Math.random() - 0.5) * 25;
+
+            const z = (Math.random() - 0.5) * 40;
+// 星星大小
+
+            const size = Math.random() * 0.04 + 0.01;
+
+            star.setAttribute(
+
+                "position",
+
+                `${x} ${y} ${z}`
+
+            );
+
+            star.setAttribute(
+
+                "radius",
+
+                size
+
+            );
+
+            star.setAttribute(
+
+                "color",
+
+                "#ffffff"
+
+            );
+
+            starContainer.appendChild(star);
+
+        }
+
+// ================================
+// 行星点击事件
+// ================================
+
+        const planets =
+
+            document.querySelectorAll(".planet");
+
+
+        planets.forEach(function (planet) {
+
+            planet.addEventListener(
+
+                "click",
+
+                function () {
+// 随机颜色
+
+                    const colors = [
+
+                        "#00ffff",
+
+                        "#ff00ff",
+
+                        "#ffff00",
+
+                        "#00ff88",
+
+                        "#ff6600",
+
+                        "#ffffff"
+
+                    ];
+
+                    const randomColor =
+
+                        colors[
+
+                            Math.floor(
+
+                                Math.random() * colors.length
+
+                            )
+
+                        ];
+
+// 改变颜色
+
+                    planet.setAttribute(
+
+                        "material",
+
+                        "color",
+
+                        randomColor
+
+                    );
+
+// 放大
+
+                    planet.setAttribute(
+
+                        "scale",
+
+                        "1.5 1.5 1.5"
+
+                    );
+
+// 2秒后恢复
+
+                    setTimeout(function () {
+
+                        planet.setAttribute(
+
+                            "scale",
+
+                            "1 1 1"
+
+                        );
+
+                    }, 2000);
+
+                }
+
+            );
+
+        });
+</script>
+</body>
+</html>
+ 
