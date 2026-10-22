@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>AR課題2 - 3Dモデル操作</title>
+<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#101827;color:#fff}
+#panel{position:fixed;z-index:10;top:12px;left:12px;right:12px;max-width:520px;margin:auto;
+background:rgba(12,20,35,.92);border:1px solid #43516b;border-radius:16px;padding:14px;box-shadow:0 8px 28px #0006}
+h1{font-size:17px;margin:0 0 10px}.line{display:flex;gap:8px;align-items:center;margin:8px 0}
+label{font-size:13px;color:#cbd5e1;min-width:72px}select,button{font-size:14px;border:1px solid #64748b;border-radius:9px;padding:10px;color:#fff;background:#243247}
+select{flex:1;min-width:0}button{flex:1;cursor:pointer}button:active{transform:scale(.98);background:#37527a}
+#status{font-size:12px;color:#a5f3fc;margin-top:8px;line-height:1.4}
+a-scene{position:fixed;inset:0}
+</style>
+</head>
+<body>
+<div id="panel">
+  <h1>🪄 Marker AR 3D Model Studio</h1>
+  <div class="line"><label for="animation">アニメーション</label><select id="animation"><option value="">モデル読み込み中…</option></select></div>
+  <div class="line">
+    <button id="bigger">＋ 拡大</button><button id="smaller">－ 縮小</button>
+  </div>
+  <div class="line">
+    <button id="left">↶ 左回転</button><button id="right">↷ 右回転</button>
+  </div>
+  <div class="line"><button id="reset">リセット</button></div>
+  <div id="status">Hiroマーカーをカメラに映してください。モデル読み込み後にアニメーションを選択できます。</div>
+</div>
+
+<a-scene embedded vr-mode-ui="enabled:false"
+  renderer="colorManagement:true; physicallyCorrectLights:true"
+  arjs="sourceType:webcam; debugUIEnabled:false; trackingMethod:best;">
+  <a-assets timeout="15000">
+    <!-- Download the CC0 animated Cow GLB from Poly Pizza and save it as assets/cow.glb -->
+    <a-asset-item id="cc0model" src="assets/cow.glb"></a-asset-item>
+  </a-assets>
+  <a-marker preset="hiro">
+    <a-entity id="model" gltf-model="#cc0model" position="0 0 0" rotation="0 0 0"
+      scale="0.35 0.35 0.35" animation-mixer="loop: repeat"></a-entity>
+    <a-plane position="0 0.01 0" rotation="-90 0 0" width="1.8" height="1.8"
+      material="color:#38bdf8;opacity:0.16;transparent:true"></a-plane>
+  </a-marker>
+  <a-entity camera></a-entity>
+</a-scene>
+<script>
+const model=document.querySelector('#model'), select=document.querySelector('#animation');
+const status=document.querySelector('#status');
+let scale=0.35, yaw=0;
+function updateTransform(){model.setAttribute('scale',`${scale} ${scale} ${scale}`);model.setAttribute('rotation',`0 ${yaw} 0`);}
+model.addEventListener('model-loaded',()=>{
+  const gltf=model.getObject3D('mesh');
+  const clips=(gltf && gltf.animations)||[];
+  select.innerHTML='';
+  if(!clips.length){select.add(new Option('アニメーションなし',''));status.textContent='モデルを読み込みました。アニメーションクリップは見つかりません。';return;}
+  select.add(new Option('アニメーションを選択',''));
+  clips.forEach((clip,i)=>select.add(new Option(clip.name||`Animation ${i+1}`,String(i))));
+  select.value='0'; playClip(0);
+  status.textContent=`モデル読み込み完了：${clips.length}個のアニメーション。Hiroマーカーを映してください。`;
+});
+model.addEventListener('model-error',()=>{status.textContent='モデルを読み込めません。assets/cow.glb が配置されているか確認してください。';});
+function playClip(index){
+  const gltf=model.getObject3D('mesh'), clips=(gltf&&gltf.animations)||[];
+  if(index===''||!clips[index]){model.removeAttribute('animation-mixer');return;}
+  model.setAttribute('animation-mixer',{clip:clips[index].name,loop:'repeat',timeScale:1});
+}
+select.addEventListener('change',()=>playClip(select.value));
+document.querySelector('#bigger').onclick=()=>{scale=Math.min(1.2,scale*1.15);updateTransform();};
+document.querySelector('#smaller').onclick=()=>{scale=Math.max(.08,scale/1.15);updateTransform();};
+document.querySelector('#left').onclick=()=>{yaw-=15;updateTransform();};
+document.querySelector('#right').onclick=()=>{yaw+=15;updateTransform();};
+document.querySelector('#reset').onclick=()=>{scale=.35;yaw=0;updateTransform();};
+</script>
+</body>
+</html>
